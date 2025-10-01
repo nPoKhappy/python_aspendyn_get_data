@@ -5,7 +5,7 @@ import os
 # --- 設定 ---
 # CSV 檔案所在的資料夾和檔名
 PROJECT_NAME = 'Test'
-FILE_NAME = 'air2_step_change_up5_dataform.csv'
+FILE_NAME = 'TR2_change_-5_dataform.csv'
 
 # 建立 CSV 檔案的完整路徑
 csv_file_path = os.path.join('csv', PROJECT_NAME, FILE_NAME)
@@ -88,7 +88,28 @@ else:
     ax4.set_title('Effect on Tail Gas SO2')
     ax4.legend(handles=[p7, p8], loc='upper right')
 
+
+    # --- 圖表 3: 轉換率分析 ---
+    fig3, ax5 = plt.subplots(figsize=(12, 7))
+    fig3.suptitle('Conversion Rate Analysis', fontsize=16)
+
+    # 繪製轉換率
+    p9, = ax5.plot(time_steps, df['conv'], color='purple', linewidth=2, label='Conversion Rate (conv)')
+    ax5.set_xlabel('Time (steps)')
+    ax5.set_ylabel('Conversion Rate', color='purple')
+    ax5.tick_params(axis='y', labelcolor='purple')
+    ax5.grid(True)
+    ax5.set_title('Process Conversion Rate Over Time')
+    ax5.legend(loc='upper right')
+
+    # 設置 Y 軸範圍以更好地顯示變化
+    conv_min = df['conv'].min()
+    conv_max = df['conv'].max()
+    conv_range = conv_max - conv_min
+    ax5.set_ylim(conv_min - 0.1 * conv_range, conv_max + 0.1 * conv_range)
+
     # --- 顯示圖表 ---
     fig1.tight_layout(rect=[0, 0, 1, 0.96])
     fig2.tight_layout(rect=[0, 0, 1, 0.96])
+    fig3.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
