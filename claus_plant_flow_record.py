@@ -429,7 +429,7 @@ class Env(object):
         self.streams('ACIDGAS').T.value = inlet_T
         self.streams('ACIDGAS').P.value = inlet_P
         self.blocks('B21').SPRemote().value = TR1
-        self.blocks('B20').SPRemote().value = TR2
+        self.blocks('B20').SP.value = TR2
         self.blocks('B33').SPRemote().value = air2
         print("inlet_T", inlet_T)
         print("inlet_P", inlet_P)
@@ -454,7 +454,7 @@ class Env(object):
                 air2 = self.blocks('B33').SPRemote().value
             elif variable == 'TR2':
                 TR1 = self.blocks('B21').SPRemote().value
-                TR2 = self.blocks('B20').SPRemote().value + step_value
+                TR2 = self.blocks('B20').SP.value + step_value
                 air2 = self.blocks('B33').SPRemote().value
             elif variable == 'air2':
                 TR1 = self.blocks('B21').SPRemote().value
@@ -465,7 +465,7 @@ class Env(object):
             self.step_change_done = True
         else:
             TR1 = self.blocks('B21').SPRemote().value
-            TR2 = self.blocks('B20').SPRemote().value
+            TR2 = self.blocks('B20').SP.value
             air2 = self.blocks('B33').SPRemote().value
         return TR1, TR2, air2
         # dead_time = 10
