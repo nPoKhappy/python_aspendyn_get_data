@@ -117,6 +117,7 @@ class Env(object):
         self.dt = dt
         self.max_ep_step = MAX_EP_STEPS
         self.inlet_count = 0
+        self.step_change_done = False
     #讀資料
     def get_input_composition(self): #獲取進料資訊
         acidgas_Fm = self.streams('ACIDGAS').F.value
@@ -407,6 +408,12 @@ class Env(object):
         Fn_hydrogen_sulfide = random.gauss(54.9391, 1.38)
         inlet_T = random.gauss(83.6, 0.4265)
         inlet_P = random.gauss(1.5722+(0.1*ram**2), 0.0085)
+        # 固定值
+        Fn_carbon_dioxide = 40.1268
+        Fn_hydrogen_dioxide = 45.3971
+        Fn_hydrogen_sulfide = 54.9391
+        inlet_T = 83.6
+        inlet_P = 1.5722+(0.1*ram**2)
         # inlet_T = random.gauss(83.6, 0)
         # inlet_P = random.gauss(1.5722+(0.1*ram**2), 0)
         # TR1 = random.gauss(234.137, 1.194)
@@ -428,53 +435,74 @@ class Env(object):
         print("inlet_P", inlet_P)
         return A, B, C, inlet_T, inlet_P, TR1, TR2, air2
 
-    def step_air2_T(self, steps, episodes):  # 模型控制動作給到step環境中
+    def step_air2_T(self, steps, step_time, step_value, variable):  # 模型控制動作給到step環境中
         #####inlet_disturbance##########
         # T2, air2 = self.disturbance_air2_T(steps)  # 進料組成改變(給值)
         # return T2, air2
-        self.TR1,self.TR2, self.air2 = self.disturbance_air2_T(steps)
+        self.TR1,self.TR2, self.air2 = self.disturbance_air2_T(steps, step_time, step_value, variable)  # 進料組成改變(給值)
         return self.TR1, self.TR2, self.air2
         ################################ 動作執行 ################################
         # self.run_step(steps, episodes)  # 輸入暫停時間並執行動作
 
 
 
-    def disturbance_air2_T(self, steps): #gauss random disturbance
-        dead_time = 10
-        ramping_time = 300
-        manual_time = 480
-        if steps == 0:
-
-            self.op_TR1,self.op_TR2, self.op_air2 = self.op(manual_time)
-            self.deadtime_TR1,self.deadtime_TR2, self.deadtime_air2 = self.deadtime_SPRemote()
-        n = steps % manual_time
-        stage = int(steps / manual_time)
-        if n < (dead_time + ramping_time):
-            if n < dead_time:
-                TR1 = self.blocks('B21').SPRemote().value
+    def disturbance_air2_T(self, steps, step_time, step_value, variable): #gauss random disturbance
+        if not self.step_change_done and steps > step_time:
+            if variable == 'TR1':
+                TR1 = self.blocks('B21').SPRemote().value + step_value
                 TR2 = self.blocks('B20').SPRemote().value
                 air2 = self.blocks('B33').SPRemote().value
+            elif variable == 'TR2':
+                TR1 = self.blocks('B21').SPRemote().value
+                TR2 = self.blocks('B20').SPRemote().value + step_value
+                air2 = self.blocks('B33').SPRemote().value
+            elif variable == 'air2':
+                TR1 = self.blocks('B21').SPRemote().value
+                TR2 = self.blocks('B20').SPRemote().value
+                air2 = self.blocks('B33').SPRemote().value + step_value
             else:
-                if stage == 0:
-                    ramp_TR1 = np.linspace(self.deadtime_TR1, self.op_TR1[stage], ramping_time)
-                    ramp_TR2 = np.linspace(self.deadtime_TR2, self.op_TR2[stage], ramping_time)
-                    ramp_air2 = np.linspace(self.deadtime_air2, self.op_air2[stage], ramping_time)
-                else:
-                    ramp_TR1 = np.linspace(self.op_TR1[stage-1], self.op_TR1[stage], ramping_time)
-                    ramp_TR2 = np.linspace(self.op_TR2[stage-1], self.op_TR2[stage], ramping_time)
-                    ramp_air2 = np.linspace(self.op_air2[stage-1], self.op_air2[stage], ramping_time)
-                TR1 = ramp_TR1[range(ramping_time)[(steps % manual_time) - dead_time]]
-                TR2 = ramp_TR2[range(ramping_time)[(steps % manual_time) - dead_time]]
-                air2 = ramp_air2[range(ramping_time)[(steps % manual_time) - dead_time]]
-
+                raise ValueError('variable only can be TR1, TR2, air2')
+            self.step_change_done = True
         else:
-            TR1 = self.op_TR1[stage]
-            TR2 = self.op_TR2[stage]
-            air2 = self.op_air2[stage]
-        print('TR1=', TR1)
-        print('TR2=', TR2)
-        print('air2=', air2)
+            TR1 = self.blocks('B21').SPRemote().value
+            TR2 = self.blocks('B20').SPRemote().value
+            air2 = self.blocks('B33').SPRemote().value
         return TR1, TR2, air2
+        # dead_time = 10
+        # ramping_time = 300
+        # manual_time = 480
+        # if steps == 0:
+
+        #     self.op_TR1,self.op_TR2, self.op_air2 = self.op(manual_time)
+        #     self.deadtime_TR1,self.deadtime_TR2, self.deadtime_air2 = self.deadtime_SPRemote()
+        # n = steps % manual_time
+        # stage = int(steps / manual_time)
+        # if n < (dead_time + ramping_time):
+        #     if n < dead_time:
+        #         TR1 = self.blocks('B21').SPRemote().value
+        #         TR2 = self.blocks('B20').SPRemote().value
+        #         air2 = self.blocks('B33').SPRemote().value
+        #     else:
+        #         if stage == 0:
+        #             ramp_TR1 = np.linspace(self.deadtime_TR1, self.op_TR1[stage], ramping_time)
+        #             ramp_TR2 = np.linspace(self.deadtime_TR2, self.op_TR2[stage], ramping_time)
+        #             ramp_air2 = np.linspace(self.deadtime_air2, self.op_air2[stage], ramping_time)
+        #         else:
+        #             ramp_TR1 = np.linspace(self.op_TR1[stage-1], self.op_TR1[stage], ramping_time)
+        #             ramp_TR2 = np.linspace(self.op_TR2[stage-1], self.op_TR2[stage], ramping_time)
+        #             ramp_air2 = np.linspace(self.op_air2[stage-1], self.op_air2[stage], ramping_time)
+        #         TR1 = ramp_TR1[range(ramping_time)[(steps % manual_time) - dead_time]]
+        #         TR2 = ramp_TR2[range(ramping_time)[(steps % manual_time) - dead_time]]
+        #         air2 = ramp_air2[range(ramping_time)[(steps % manual_time) - dead_time]]
+
+        # else:
+        #     TR1 = self.op_TR1[stage]
+        #     TR2 = self.op_TR2[stage]
+        #     air2 = self.op_air2[stage]
+        # print('TR1=', TR1)
+        # print('TR2=', TR2)
+        # print('air2=', air2)
+        # return TR1, TR2, air2
 
     def op(self, manual_time):
         op_TR1 = [random.gauss(250, 25) for _ in range(int(60 * 24 / manual_time))]
