@@ -5,8 +5,12 @@ import pandas as pd
 import os
 
 ###############################  Model setting  ####################################
+variable_list = ['TR1', 'TR2', 'air2']
+variable = variable_list[1]  #改變的變數名稱 TR1 or TR2
+step_time = 20  #幾分鐘改變一次
+step_value = +5  #每次改變多少
 PROJECT_NAME = 'Test'
-OUTPUT_FILE = 'air2_step_change_up5'  #輸出檔案名稱
+OUTPUT_FILE = f'{variable}_change_{step_value}'  #輸出檔案名稱
 dt = 1  #每一步的模擬時間(MIN)
 MAX_EP_STEPS = 1440 #每個訓練及的最大步數
 MAX_EPISODES = 1
@@ -40,10 +44,6 @@ def save_result(data, datacomp, episode, steps):
     return data, datacomp
 
 ################################## Training #####################################################
-step_time = 30  #幾分鐘改變一次
-step_value = 5  #每次改變多少
-variable_list = ['TR1', 'TR2', 'air2']
-variable = variable_list[2]  #改變的變數名稱 TR1 or TR2
 for i in range(MAX_EPISODES):#每個EPISODES MAX_EPISODES步，一次MAX_EPISODES分鐘
     state = env.reset()   #環境中抓出最初始步驟，有用到再來抓
 
