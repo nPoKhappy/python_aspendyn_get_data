@@ -6,14 +6,14 @@ import os
 
 ###############################  Model setting  ####################################
 PROJECT_NAME = 'Test'
-OUTPUT_FILE = 'Test'
+OUTPUT_FILE = 'air2_step_change_up5'  #輸出檔案名稱
 dt = 1  #每一步的模擬時間(MIN)
 MAX_EP_STEPS = 1440 #每個訓練及的最大步數
-MAX_EPISODES = 10
+MAX_EPISODES = 1
 
 env = plant.Env(dt, MAX_EP_STEPS) #參數給到環境中
 
-datacomp = np.zeros((MAX_EPISODES*MAX_EP_STEPS, 8))
+datacomp = np.zeros((MAX_EPISODES*MAX_EP_STEPS + 1, 8))
 data = np.zeros((MAX_EPISODES*MAX_EP_STEPS, 77))
 index_columns = ['i', 'j', 'steps', 'acidgas_Fm', 'acidgas_CO2', 'acidgas_H2O', 'acidgas_H2S', 'acidgas_T', 'acidgas_P','air','air_SP',
                  'second_air2', 'air2_SP', 'COG', 'COG_SP', 'burner_input_T_SP', 'burner_input_T_PV', 'burner_inputP', 'burner_output_T_SP', 'burner_output_T_PV', 'burner_output_P_SP', 'burner_output_P_PV',
@@ -40,25 +40,32 @@ def save_result(data, datacomp, episode, steps):
     return data, datacomp
 
 ################################## Training #####################################################
+step_time = 30  #幾分鐘改變一次
+step_value = 5  #每次改變多少
+variable_list = ['TR1', 'TR2', 'air2']
+variable = variable_list[2]  #改變的變數名稱 TR1 or TR2
 for i in range(MAX_EPISODES):#每個EPISODES MAX_EPISODES步，一次MAX_EPISODES分鐘
     state = env.reset()   #環境中抓出最初始步驟，有用到再來抓
 
     if i < 11:
-        for j in range(MAX_EP_STEPS):
-            print(f"j={j},i={i}")
+        for j in range(1, MAX_EP_STEPS + 1):
+            print(f"STEPS:{j},EPISODE={i + 1}")
             y_ = env.step(j, i, 1)
-            z_ = env.step_air2_T(j, i)
+            z_ = env.step_air2_T(j, step_time, step_value, variable)
+            print(f"TR1, TR2, air2 = {z_}")
+            if j == step_time + 1:
+                print(f"STEP CHANGE at j={j}: new value is {z_}")
             env.do_dis3(*y_, *z_)
             env.run_step(j, i)
-            save_result(data, datacomp, i, j)
+            save_result(data, datacomp, i, j - 1)
 
-            data_df.iloc[(i) * MAX_EP_STEPS + j] = np.array(data[(i) * MAX_EP_STEPS + j, :]).reshape(-1)  # 创建 DataFrame 并指定列名
+            data_df.iloc[(i) * MAX_EP_STEPS + j - 1] = np.array(data[(i) * MAX_EP_STEPS + j - 1, :]).reshape(-1)  # 创建 DataFrame 并指定列名
             # 将所有列作为索引
             # data_df.set_index(index_columns, inplace=True)
             # 保存为 CSV 文件
             os.makedirs('csv/%s' % PROJECT_NAME, exist_ok=True)
             data_df.to_csv('csv/%s/%s_dataform.csv' % (PROJECT_NAME, OUTPUT_FILE))
-        data_df.to_csv('csv/%s/day/%s_dataform%d.csv' % (PROJECT_NAME, OUTPUT_FILE, i))
+        
 
     # elif 1 <= i < 2:
     #     for j in range(MAX_EP_STEPS):
