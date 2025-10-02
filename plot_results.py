@@ -33,7 +33,7 @@ else:
     ax1.grid(True)
 
     p2, = ax1_twin.plot(time_steps, df['B35_H2S'], color='red', label='Tail Gas H2S (CV)')
-    ax1_twin.set_ylabel('H2S Concentration (ppm)', color='red')
+    ax1_twin.set_ylabel('H2S Concentration ', color='red')
     ax1_twin.tick_params(axis='y', labelcolor='red')
     
     ax1.set_title('Effect on Tail Gas H2S')
@@ -48,7 +48,7 @@ else:
     ax2.grid(True)
 
     p4, = ax2_twin.plot(time_steps, df['B35_SO2'], color='green', label='Tail Gas SO2 (CV)')
-    ax2_twin.set_ylabel('SO2 Concentration (ppm)', color='green')
+    ax2_twin.set_ylabel('SO2 Concentration ', color='green')
     ax2_twin.tick_params(axis='y', labelcolor='green')
 
     ax2.set_title('Effect on Tail Gas SO2')
@@ -67,7 +67,7 @@ else:
     ax3.grid(True)
 
     p6, = ax3_twin.plot(time_steps, df['B35_H2S'], color='red', label='Tail Gas H2S (CV)')
-    ax3_twin.set_ylabel('H2S Concentration (ppm)', color='red')
+    ax3_twin.set_ylabel('H2S Concentration ', color='red')
     ax3_twin.tick_params(axis='y', labelcolor='red')
 
     ax3.set_title('Effect on Tail Gas H2S')
@@ -82,7 +82,7 @@ else:
     ax4.grid(True)
 
     p8, = ax4_twin.plot(time_steps, df['B35_SO2'], color='green', label='Tail Gas SO2 (CV)')
-    ax4_twin.set_ylabel('SO2 Concentration (ppm)', color='green')
+    ax4_twin.set_ylabel('SO2 Concentration ', color='green')
     ax4_twin.tick_params(axis='y', labelcolor='green')
 
     ax4.set_title('Effect on Tail Gas SO2')
