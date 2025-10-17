@@ -18,6 +18,9 @@ else:
     # Read CSV file
     df = pd.read_csv(csv_file)
     
+    # Strip whitespace from column names
+    df.columns = df.columns.str.strip()
+    
     # Display column names
     print(f"\nAvailable columns:")
     for i, col in enumerate(df.columns):
@@ -27,94 +30,107 @@ else:
     x = df['Air2 [m³/h]'].values
     y = df['T2 [℃]'].values
     
-    # Select variable to plot - only Total S
-    var_name = 'total S[%]'
-    plot_title = 'Total Sulfur Content'
-    cbar_label = 'Total S [%]'
-    fmt = '.6f'
+    # Variables to plot
+    variables = [
+        {'name': 'total S[%]', 'title': 'Total Sulfur Content', 'label': 'Total S [%]', 'fmt': '.6f', 'file': 'totalS'},
+        {'name': 'H2SMF', 'title': 'H2S Mole Fraction', 'label': 'H2S Mole Fraction', 'fmt': '.6f', 'file': 'H2SMF'},
+        {'name': 'SO2MF', 'title': 'SO2 Mole Fraction', 'label': 'SO2 Mole Fraction', 'fmt': '.6f', 'file': 'SO2MF'}
+    ]
     
-    z = df[var_name].values
+    # Loop through each variable
+    for var in variables:
+        var_name = var['name']
+        plot_title = var['title']
+        cbar_label = var['label']
+        fmt = var['fmt']
+        file_suffix = var['file']
+        
+        z = df[var_name].values
+        
+        print(f"\n{'='*50}")
+        print(f"Processing: {plot_title}")
+        print(f"{'='*50}")
+        print(f"Air2: {x.min():.2f} - {x.max():.2f} m³/h")
+        print(f"T2: {y.min():.2f} - {y.max():.2f} °C")
+        print(f"{cbar_label}: {z.min():{fmt}} - {z.max():{fmt}}")
+        print(f"{cbar_label} range: {z.max() - z.min():{fmt}}")
+        print(f"Total data points: {len(x)}")
+        
+        # ========== 2D Contour Plot ==========
+        fig1, ax1 = plt.subplots(figsize=(12, 10))
+        
+        # Create more contour levels to show small variations
+        num_levels = 50
+        contour = ax1.tricontourf(x, y, z, levels=num_levels, cmap='RdYlGn_r')
+        contour_lines = ax1.tricontour(x, y, z, levels=15, colors='black', 
+                                       linewidths=0.8, alpha=0.4)
+        ax1.clabel(contour_lines, inline=True, fontsize=9, fmt=f'%{fmt}', inline_spacing=10)
+        
+        # Add colorbar with better formatting for small values
+        cbar = plt.colorbar(contour, ax=ax1, format=f'%{fmt}')
+        cbar.set_label(cbar_label, fontsize=12, fontweight='bold')
+        cbar.ax.tick_params(labelsize=10)
+        
+        # Add text showing the range
+        range_text = f'Range: {z.min():{fmt}} - {z.max():{fmt}}\nΔ = {z.max()-z.min():{fmt}}'
+        ax1.text(0.02, 0.98, range_text, transform=ax1.transAxes, 
+                fontsize=10, verticalalignment='top',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+        
+        # Set labels and title
+        ax1.set_xlabel('Air2 [m³/h]', fontsize=13)
+        ax1.set_ylabel('T2 [°C]', fontsize=13)
+        ax1.set_title(f'2D Contour Plot: {plot_title}', fontsize=15, fontweight='bold')
+        ax1.grid(True, alpha=0.3)
+        
+        # Add original range boundaries
+        ax1.axvline(x=150, color='red', linestyle='--', alpha=0.4, linewidth=2, label='Original X Range')
+        ax1.axvline(x=300, color='red', linestyle='--', alpha=0.4, linewidth=2)
+        ax1.axhline(y=140, color='orange', linestyle='--', alpha=0.4, linewidth=2, label='Original Y Range')
+        ax1.axhline(y=240, color='orange', linestyle='--', alpha=0.4, linewidth=2)
+        
+        ax1.legend(loc='upper right')
+        plt.tight_layout()
+        
+        # Save 2D plot
+        save_path_2d = os.path.join('csv', PROJECT_NAME, f'contour_plot_{file_suffix}_2D.png')
+        plt.savefig(save_path_2d, dpi=300, bbox_inches='tight')
+        print(f"\nSaved 2D plot: {save_path_2d}")
+        
+        plt.show()
+        
+        # ========== 3D Surface Plot ==========
+        fig2 = plt.figure(figsize=(14, 10))
+        ax2 = fig2.add_subplot(111, projection='3d')
+        
+        # Create 3D surface plot
+        surf = ax2.plot_trisurf(x, y, z, cmap='RdYlGn_r', linewidth=0.1, antialiased=True, alpha=0.9)
+        
+        # Add colorbar
+        cbar3d = fig2.colorbar(surf, ax=ax2, format=f'%{fmt}', shrink=0.5, aspect=10)
+        cbar3d.set_label(cbar_label, fontsize=12, fontweight='bold')
+        
+        # Set labels and title
+        ax2.set_xlabel('Air2 [m³/h]', fontsize=12, labelpad=10)
+        ax2.set_ylabel('T2 [°C]', fontsize=12, labelpad=10)
+        ax2.set_zlabel(cbar_label, fontsize=12, labelpad=10)
+        ax2.set_title(f'3D Surface Plot: {plot_title}', fontsize=15, fontweight='bold', pad=20)
+        
+        # Set viewing angle
+        ax2.view_init(elev=25, azim=45)
+        
+        # Add grid
+        ax2.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        
+        # Save 3D plot
+        save_path_3d = os.path.join('csv', PROJECT_NAME, f'contour_plot_{file_suffix}_3D.png')
+        plt.savefig(save_path_3d, dpi=300, bbox_inches='tight')
+        print(f"Saved 3D plot: {save_path_3d}")
+        
+        plt.show()
     
     print(f"\n{'='*50}")
-    print(f"Processing: {plot_title}")
+    print(f"ALL PLOTS COMPLETED!")
     print(f"{'='*50}")
-    print(f"Air2: {x.min():.2f} - {x.max():.2f} m³/h")
-    print(f"T2: {y.min():.2f} - {y.max():.2f} °C")
-    print(f"{cbar_label}: {z.min():{fmt}} - {z.max():{fmt}}")
-    print(f"{cbar_label} range: {z.max() - z.min():{fmt}}")
-    print(f"Total data points: {len(x)}")
-    
-    # ========== 2D Contour Plot ==========
-    fig1, ax1 = plt.subplots(figsize=(12, 10))
-    
-    # Create more contour levels to show small variations
-    num_levels = 50
-    contour = ax1.tricontourf(x, y, z, levels=num_levels, cmap='RdYlGn_r')
-    contour_lines = ax1.tricontour(x, y, z, levels=15, colors='black', 
-                                   linewidths=0.8, alpha=0.4)
-    ax1.clabel(contour_lines, inline=True, fontsize=9, fmt=f'%{fmt}', inline_spacing=10)
-    
-    # Add colorbar with better formatting for small values
-    cbar = plt.colorbar(contour, ax=ax1, format=f'%{fmt}')
-    cbar.set_label(cbar_label, fontsize=12, fontweight='bold')
-    cbar.ax.tick_params(labelsize=10)
-    
-    # Add text showing the range
-    range_text = f'Range: {z.min():{fmt}} - {z.max():{fmt}}\nΔ = {z.max()-z.min():{fmt}}'
-    ax1.text(0.02, 0.98, range_text, transform=ax1.transAxes, 
-            fontsize=10, verticalalignment='top',
-            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-    
-    # Set labels and title
-    ax1.set_xlabel('Air2 [m³/h]', fontsize=13)
-    ax1.set_ylabel('T2 [°C]', fontsize=13)
-    ax1.set_title(f'2D Contour Plot: {plot_title}', fontsize=15, fontweight='bold')
-    ax1.grid(True, alpha=0.3)
-    
-    # Add original range boundaries
-    ax1.axvline(x=150, color='red', linestyle='--', alpha=0.4, linewidth=2, label='Original X Range')
-    ax1.axvline(x=300, color='red', linestyle='--', alpha=0.4, linewidth=2)
-    ax1.axhline(y=140, color='orange', linestyle='--', alpha=0.4, linewidth=2, label='Original Y Range')
-    ax1.axhline(y=240, color='orange', linestyle='--', alpha=0.4, linewidth=2)
-    
-    ax1.legend(loc='upper right')
-    plt.tight_layout()
-    
-    # Save 2D plot
-    save_path_2d = os.path.join('csv', PROJECT_NAME, 'contour_plot_totalS_2D.png')
-    plt.savefig(save_path_2d, dpi=300, bbox_inches='tight')
-    print(f"\nSaved 2D plot: {save_path_2d}")
-    
-    plt.show()
-    
-    # ========== 3D Surface Plot ==========
-    fig2 = plt.figure(figsize=(14, 10))
-    ax2 = fig2.add_subplot(111, projection='3d')
-    
-    # Create 3D surface plot
-    surf = ax2.plot_trisurf(x, y, z, cmap='RdYlGn_r', linewidth=0.1, antialiased=True, alpha=0.9)
-    
-    # Add colorbar
-    cbar3d = fig2.colorbar(surf, ax=ax2, format=f'%{fmt}', shrink=0.5, aspect=10)
-    cbar3d.set_label(cbar_label, fontsize=12, fontweight='bold')
-    
-    # Set labels and title
-    ax2.set_xlabel('Air2 [m³/h]', fontsize=12, labelpad=10)
-    ax2.set_ylabel('T2 [°C]', fontsize=12, labelpad=10)
-    ax2.set_zlabel('Total S [%]', fontsize=12, labelpad=10)
-    ax2.set_title(f'3D Surface Plot: {plot_title}', fontsize=15, fontweight='bold', pad=20)
-    
-    # Set viewing angle
-    ax2.view_init(elev=25, azim=45)
-    
-    # Add grid
-    ax2.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    
-    # Save 3D plot
-    save_path_3d = os.path.join('csv', PROJECT_NAME, 'contour_plot_totalS_3D.png')
-    plt.savefig(save_path_3d, dpi=300, bbox_inches='tight')
-    print(f"Saved 3D plot: {save_path_3d}")
-    
-    plt.show()
