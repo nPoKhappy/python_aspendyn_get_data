@@ -428,9 +428,10 @@ class Env(object):
         self.streams('ACIDGAS').FcR('H2S').Value = C
         self.streams('ACIDGAS').T.value = inlet_T
         self.streams('ACIDGAS').P.value = inlet_P
-        self.blocks('B21').SPRemote().value = TR1
+        # 改為直接寫 SP，不使用 SPRemote
+        self.blocks('B21').SP.value = TR1
         self.blocks('B20').SP.value = TR2
-        self.blocks('B33').SPRemote().value = air2
+        self.blocks('B33').SP.value = air2
         print("inlet_T", inlet_T)
         print("inlet_P", inlet_P)
         return A, B, C, inlet_T, inlet_P, TR1, TR2, air2
