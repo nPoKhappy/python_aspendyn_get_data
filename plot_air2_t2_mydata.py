@@ -23,6 +23,11 @@ N_PLOTS = 14
 H2SMF_VIEW = (35, 120)
 SO2MF_VIEW = (20, 110)
 
+# X-axis conversion: new_x = 17.228 * old_x - 0.09
+# Maps 8.13 -> 140, 17.4219 -> 300
+def convert_x(old_x):
+    return 17.228 * old_x - 0.09
+
 
 def clean_colnames(cols):
     out = []
@@ -72,12 +77,19 @@ def make_triangulation(x, y):
 
 
 def plot_contours(dfg, x_col, y_col, z_cols, titles, suptitle, out_path, xlabel=None, ylabel=None, zlabels=None):
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5), constrained_layout=True)
-    x = dfg[x_col].values
+    n = len(z_cols)
+    fig, axes = plt.subplots(1, n, figsize=(6*n, 5), constrained_layout=True)
+    if n == 1:
+        axes = [axes]
+    # Apply x-axis conversion
+    x = convert_x(dfg[x_col].values)
     y = dfg[y_col].values
     tri = make_triangulation(x, y)
 
-    for i, (ax, zc, title, cmap) in enumerate(zip(axes, z_cols, titles, ['viridis', 'plasma'])):
+    cmaps_default = ['RdYlGn_r', 'RdYlGn_r', 'RdYlGn_r', 'RdYlGn_r']
+    cmaps = cmaps_default[:n]
+
+    for i, (ax, zc, title, cmap) in enumerate(zip(axes, z_cols, titles, cmaps)):
         z = dfg[zc].values
         if tri is not None and len(z) >= 3:
             t = mtri.Triangulation(x, y)  # use original points for values
@@ -100,15 +112,20 @@ def plot_contours(dfg, x_col, y_col, z_cols, titles, suptitle, out_path, xlabel=
 
 def plot_3d_surfaces(dfg, x_col, y_col, z_cols, titles, suptitle, out_path, xlabel=None, ylabel=None, zlabels=None):
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
-    fig = plt.figure(figsize=(13, 5))
-    ax1 = fig.add_subplot(1, 2, 1, projection='3d')
-    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
-    axes = [ax1, ax2]
+    n = len(z_cols)
+    fig = plt.figure(figsize=(6.5*n, 5))
+    axes = []
+    for i in range(n):
+        axes.append(fig.add_subplot(1, n, i+1, projection='3d'))
 
-    x = dfg[x_col].values
+    # Apply x-axis conversion
+    x = convert_x(dfg[x_col].values)
     y = dfg[y_col].values
 
-    for i, (ax, zc, title, cmap) in enumerate(zip(axes, z_cols, titles, ['viridis', 'plasma'])):
+    cmaps_default = ['RdYlGn_r', 'RdYlGn_r', 'RdYlGn_r', 'RdYlGn_r']
+    cmaps = cmaps_default[:n]
+
+    for i, (ax, zc, title, cmap) in enumerate(zip(axes, z_cols, titles, cmaps)):
         z = dfg[zc].values
         tri = make_triangulation(x, y)
         if tri is not None and len(z) >= 3:
@@ -123,7 +140,7 @@ def plot_3d_surfaces(dfg, x_col, y_col, z_cols, titles, suptitle, out_path, xlab
         ax.set_xlabel(xlabel or x_col)
         ax.set_ylabel(ylabel or y_col)
         ax.set_zlabel((zlabels[i] if zlabels else zc))
-        # Different angle for H2SMF (first subplot)
+        # Different angle for H2SMF (first subplot); others use SO2MF view
         elev, azim = (H2SMF_VIEW if i == 0 else SO2MF_VIEW)
         ax.view_init(elev=elev, azim=azim)
 
@@ -182,6 +199,9 @@ def main():
     df_aug[YCOL] = y_ser
     df_aug[Z1COL] = z1_ser
     df_aug[Z2COL] = z2_ser
+    # Compute Total S = H2SMF + SO2MF
+    TOTALCOL = '__TOTAL_S__'
+    df_aug[TOTALCOL] = df_aug[Z1COL] + df_aug[Z2COL]
 
     # Keep only valid rows
     df_valid = df_aug.dropna(subset=[XCOL, YCOL, Z1COL, Z2COL]).copy()
@@ -240,12 +260,29 @@ def main():
             ['H2SMF (2D Contour)', 'SO2MF (2D Contour)'],
             f'{col_group} = {g}',
             out_contour,
-            xlabel=col_air2,
+            xlabel='AIR2 ($m^3$)',
             ylabel=col_t2,
             zlabels=[col_h2smf, col_so2mf],
         )
         saved_contour += 1
         print(f"Saved contour: {out_contour} ({len(dfg)} points)")
+
+        # Additional 2D contour for Total S
+        fname_contour_total = f"air2_t2_{safe_col_group}_{safe_g}_TotalS_contour.png"
+        out_contour_total = os.path.join(OUT_DIR, fname_contour_total)
+        plot_contours(
+            dfg,
+            XCOL,
+            YCOL,
+            [TOTALCOL],
+            ['Total S (2D Contour)'],
+            f'{col_group} = {g}',
+            out_contour_total,
+            xlabel='AIR2 ($m^3$)',
+            ylabel=col_t2,
+            zlabels=['Total S'],
+        )
+        print(f"Saved contour (Total S): {out_contour_total} ({len(dfg)} points)")
 
         # 3D surface figure (two subplots: H2SMF, SO2MF)
         fname_3d = f"air2_t2_{safe_col_group}_{safe_g}_H2SMF_SO2MF_3D.png"
@@ -258,12 +295,29 @@ def main():
             ['H2SMF (3D Surface)', 'SO2MF (3D Surface)'],
             f'{col_group} = {g}',
             out_3d,
-            xlabel=col_air2,
+            xlabel='AIR2 ($m^3$)',
             ylabel=col_t2,
             zlabels=[col_h2smf, col_so2mf],
         )
         saved_3d += 1
         print(f"Saved 3D: {out_3d} ({len(dfg)} points)")
+
+        # Additional 3D surface for Total S
+        fname_3d_total = f"air2_t2_{safe_col_group}_{safe_g}_TotalS_3D.png"
+        out_3d_total = os.path.join(OUT_DIR, fname_3d_total)
+        plot_3d_surfaces(
+            dfg,
+            XCOL,
+            YCOL,
+            [TOTALCOL],
+            ['Total S (3D Surface)'],
+            f'{col_group} = {g}',
+            out_3d_total,
+            xlabel='AIR2 ($m^3$)',
+            ylabel=col_t2,
+            zlabels=['Total S'],
+        )
+        print(f"Saved 3D (Total S): {out_3d_total} ({len(dfg)} points)")
 
     if use_desired and missing:
         print(f"Warning: Missing groups (no rows found): {missing}")
