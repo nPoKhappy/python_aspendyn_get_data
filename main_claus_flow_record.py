@@ -7,9 +7,9 @@ import os
 ###############################  Model setting  ####################################
 variable_list = ['TR1', 'TR2', 'air2']
 variable = variable_list[1]  #改變的變數名稱 TR1 or TR2
-step_time = 20  #幾分鐘改變一次
-step_value = +5  #每次改變多少
-PROJECT_NAME = 'Test'
+step_time = 20  #第幾分鐘改變
+step_value = +75 # 改變量
+PROJECT_NAME = 'gain_reverse_test_2'
 OUTPUT_FILE = f'{variable}_change_{step_value}'  #輸出檔案名稱
 dt = 1  #每一步的模擬時間(MIN)
 MAX_EP_STEPS = 1440 #每個訓練及的最大步數
