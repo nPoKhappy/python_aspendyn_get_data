@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於從指定的 CSV 文件中讀取數據，並繪製多個 2D 等高線圖和 3D 表面圖，以展示不同變量（如總硫含量、H2S 分子分率和 SO2 分子分率）在 AIR2 和 T2 之間的關係。程式碼還包括數據清理、列名標準化以及圖表保存等功能。
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於從指定的 CSV 文件中讀取數據，並繪製三個 3D 表面圖，展示在不同 acidgas_Fm 條件下，air2_SP_m3 和 HEATER2_output_T_SP 對 Total_S 的影響。程式碼還包括數據清理、列名標準化以及在圖表上標註特定點的功能。
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

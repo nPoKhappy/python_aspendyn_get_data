@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於從aspen dynamic CSV 文件中讀取數據，並繪製多個圖表以分析二次空氣和 TR2 溫度對尾氣中 H2S 和 SO2 濃度的影響，以及過程轉換率的變化。程式碼包括檢查檔案存在性、數據讀取、圖表繪製和顯示等功能。
 import pandas as pd
 import matplotlib.pyplot as plt
 import os

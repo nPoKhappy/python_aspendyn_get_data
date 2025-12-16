@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於與 Aspen Dynamics 進行 COM 通訊，並模擬 Claus 工廠的操作流程。它包含了初始化 Aspen COM 物件、讀取和設置流程參數、以及根據給定的動作步驟來更新模擬狀態的功能。
 import win32com.client
 import numpy as np
 import random

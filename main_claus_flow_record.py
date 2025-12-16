@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於模擬 Claus 工廠的操作流程，通過與 Aspen Dynamics 進行 COM 通訊來讀取和設置流程參數。它定義了變數變化的時間和幅度，並在每個模擬步驟中更新系統狀態，最終將結果保存為 CSV 文件以供分析。
 import claus_plant_flow_record as plant  #環境-(Aspen)
 import numpy as np
 import pandas as pd

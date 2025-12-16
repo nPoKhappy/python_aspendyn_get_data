@@ -1,3 +1,4 @@
+# 註解: 此程式碼用於從指定的 CSV 文件中讀取數據，並使用多項式回歸模型來擬合 Total S 與 Air2 和 T2 之間的關係。程式碼包括模型訓練、性能評估、3D 可視化以及將回歸係數保存到 CSV 文件中的功能。
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

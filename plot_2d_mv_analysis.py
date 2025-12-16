@@ -1,3 +1,6 @@
+# 註解: 此程式碼用於從指定目錄中的多個 XLSX 文件中讀取數據，並繪製每個文件中兩個變量（second_air2 和 HEATER2_output_T_SP）之間的""時間序列軌跡圖""。
+# 每個圖表顯示了數據的起點和終點，並標註了原始範圍邊界。此外，程式碼還會輸出分析的統計信息，包括文件數量和數據範圍。
+# 學長論文圖八數據
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
