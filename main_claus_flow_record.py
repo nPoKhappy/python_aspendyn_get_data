@@ -6,17 +6,24 @@ import pandas as pd
 import os
 
 ###############################  Model setting  ####################################
-variable_list = ['TR1', 'TR2', 'air2']
-variable = variable_list[1]  #改變的變數名稱 TR1 or TR2
-step_time = 20  #第幾分鐘改變
-step_value = +75 # 改變量
-PROJECT_NAME = 'gain_reverse_test_2'
-OUTPUT_FILE = f'{variable}_change_{step_value}'  #輸出檔案名稱
+# 改變哪個變量
+# two options: TR2 or air2
+variable = "TR2"
+
+step_time = 400  #第幾分鐘改變
+step_value = +10 # 改變量
+PROJECT_NAME = 'acidgas_fm=140'
 dt = 1  #每一步的模擬時間(MIN)
 MAX_EP_STEPS = 1440 #每個訓練及的最大步數
 MAX_EPISODES = 1
 
 env = plant.Env(dt, MAX_EP_STEPS) #參數給到環境中
+
+# 讀取初始設定值並生成輸出檔案名稱
+initial_air2_SP, initial_HEATER2_T_SP = env.get_initial_setpoints()
+OUTPUT_FILE = f'air2_{initial_air2_SP:.0f}_t2_{initial_HEATER2_T_SP:.0f}_{variable}_change_{step_value}'
+print(f"初始設定值: air2_SP={initial_air2_SP:.2f}, HEATER2_T_SP={initial_HEATER2_T_SP:.2f}")
+print(f"輸出檔案名稱: {OUTPUT_FILE}")
 
 datacomp = np.zeros((MAX_EPISODES*MAX_EP_STEPS + 1, 8))
 data = np.zeros((MAX_EPISODES*MAX_EP_STEPS, 77))
@@ -65,7 +72,7 @@ for i in range(MAX_EPISODES):#每個EPISODES MAX_EPISODES步，一次MAX_EPISODE
             # data_df.set_index(index_columns, inplace=True)
             # 保存为 CSV 文件
             os.makedirs('csv/%s' % PROJECT_NAME, exist_ok=True)
-            data_df.to_csv('csv/%s/%s_dataform.csv' % (PROJECT_NAME, OUTPUT_FILE))
+            data_df.to_csv('csv/%s/%s.csv' % (PROJECT_NAME, OUTPUT_FILE))
         
 
     # elif 1 <= i < 2:

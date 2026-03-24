@@ -140,6 +140,17 @@ class Env(object):
         acidgas_H2S = self.streams('ACIDGAS').Fcn('H2S').value
         return FcR_acidgas_CO2, FcR_acidgas_H2O, FcR_acidgas_H2S, acidgas_CO2, acidgas_H2O, acidgas_H2S
 
+    def get_initial_setpoints(self):  # 獲取初始設定值，用於命名輸出檔案
+        """
+        獲取初始的 air2_SP 和 HEATER2_output_T_SP 設定值
+        Returns:
+            air2_SP: 二次空氣設定值
+            HEATER2_T_SP: HEATER2 溫度設定值
+        """
+        air2_SP = self.blocks('B33').SP.value
+        HEATER2_T_SP = self.blocks('B20').SP.value
+        return air2_SP, HEATER2_T_SP
+
     def get_burner_composition(self):  # 獲取鍋爐資訊
 
         second_air2 = self.streams('AIR2').Fv.value
@@ -451,24 +462,24 @@ class Env(object):
     def disturbance_air2_T(self, steps, step_time, step_value, variable): #gauss random disturbance
         if not self.step_change_done and steps > step_time:
             if variable == 'TR1':
-                TR1 = self.blocks('B21').SPRemote().value + step_value
-                TR2 = self.blocks('B20').SPRemote().value
-                air2 = self.blocks('B33').SPRemote().value
+                TR1 = self.blocks('B21').SP.value + step_value
+                TR2 = self.blocks('B20').SP.value
+                air2 = self.blocks('B33').SP.value
             elif variable == 'TR2':
-                TR1 = self.blocks('B21').SPRemote().value
+                TR1 = self.blocks('B21').SP.value
                 TR2 = self.blocks('B20').SP.value + step_value
-                air2 = self.blocks('B33').SPRemote().value
+                air2 = self.blocks('B33').SP.value
             elif variable == 'air2':
-                TR1 = self.blocks('B21').SPRemote().value
-                TR2 = self.blocks('B20').SPRemote().value
-                air2 = self.blocks('B33').SPRemote().value + step_value
+                TR1 = self.blocks('B21').SP.value
+                TR2 = self.blocks('B20').SP.value
+                air2 = self.blocks('B33').SP.value + step_value
             else:
                 raise ValueError('variable only can be TR1, TR2, air2')
             self.step_change_done = True
         else:
-            TR1 = self.blocks('B21').SPRemote().value
+            TR1 = self.blocks('B21').SP.value
             TR2 = self.blocks('B20').SP.value
-            air2 = self.blocks('B33').SPRemote().value
+            air2 = self.blocks('B33').SP.value
         return TR1, TR2, air2
         # dead_time = 10
         # ramping_time = 300
