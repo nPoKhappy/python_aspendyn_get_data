@@ -18,7 +18,7 @@ if not os.path.exists(csv_folder):
     print("Please confirm the directory path is correct.")
 else:
     # Search for all XLSX files
-    xlsx_files = glob.glob(os.path.join(csv_folder, "*.xlsx"))
+    xlsx_files = sorted(glob.glob(os.path.join(csv_folder, "*.xlsx")))
     
     if not xlsx_files:
         print(f"No XLSX files found in '{csv_folder}'")
