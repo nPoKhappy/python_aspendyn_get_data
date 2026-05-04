@@ -8,11 +8,11 @@ import os
 ###############################  Model setting  ####################################
 # 改變哪個變量
 # two options: TR2 or air2
-variable = "TR2"
+variable = "air2"
 
 step_time = 400  #第幾分鐘改變
 step_value = +10 # 改變量
-PROJECT_NAME = 'acidgas_fm=140'
+PROJECT_NAME = 'acidgas_fm=140_no_ss'
 dt = 1  #每一步的模擬時間(MIN)
 MAX_EP_STEPS = 1440 #每個訓練及的最大步數
 MAX_EPISODES = 1
@@ -21,7 +21,15 @@ env = plant.Env(dt, MAX_EP_STEPS) #參數給到環境中
 
 # 讀取初始設定值並生成輸出檔案名稱
 initial_air2_SP, initial_HEATER2_T_SP = env.get_initial_setpoints()
+
 OUTPUT_FILE = f'air2_{initial_air2_SP:.0f}_t2_{initial_HEATER2_T_SP:.0f}_{variable}_change_{step_value}'
+file_path = f'csv/{PROJECT_NAME}/{OUTPUT_FILE}.csv'
+
+if os.path.exists(file_path):
+    print(f"偵測到 {OUTPUT_FILE}.csv 已存在，自動切換變數...")
+    variable = "TR2" if variable == "air2" else "air2"
+    OUTPUT_FILE = f'air2_{initial_air2_SP:.0f}_t2_{initial_HEATER2_T_SP:.0f}_{variable}_change_{step_value}'
+
 print(f"初始設定值: air2_SP={initial_air2_SP:.2f}, HEATER2_T_SP={initial_HEATER2_T_SP:.2f}")
 print(f"輸出檔案名稱: {OUTPUT_FILE}")
 
