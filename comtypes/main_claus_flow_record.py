@@ -10,7 +10,7 @@ import os
 # two options: TR2 or air2
 variable = "TR2"
 
-step_time = 400  #第幾分鐘改變
+step_time = 10  #第幾分鐘改變
 step_value = +10 # 改變量
 PROJECT_NAME = 'comtypes'
 ASPEN_FILE_NAME = "air2_180-T_150_v2.dynf"

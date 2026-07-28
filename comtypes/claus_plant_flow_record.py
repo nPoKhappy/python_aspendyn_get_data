@@ -112,7 +112,9 @@ class Env(object):
 
         print(f"啟動 Aspen Plus Dynamics: {ad_path}")
         print(f"開啟檔案: {aspen_file_path}")
-        subprocess.Popen([ad_path, "/AD", aspen_file_path], cwd=ad_working_dir)
+        self.ad_process = subprocess.Popen(
+            [ad_path, "/AD", aspen_file_path], cwd=ad_working_dir
+        )
 
         self.adyn = None
         last_error = None
