@@ -1,0 +1,198 @@
+[
+  {
+    "case": "R5-15",
+    "seed": 285287799143781234,
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 313.2036772639405,
+        "max": 324.1974988248093
+      },
+      "HEATER2_output_T_SP": {
+        "min": 190.0,
+        "max": 193.69665791550247
+      },
+      "acidgas_Fm": {
+        "min": 136.7976879662867,
+        "max": 148.25360943774675
+      },
+      "acidgas_T": {
+        "min": 82.94882731631067,
+        "max": 84.13199889835795
+      },
+      "acidgas_P": {
+        "min": 1.6673278258623807,
+        "max": 1.6829909229774809
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  },
+  {
+    "case": "R5-16",
+    "seed": 8688028024339304806,
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 197.52144987944322,
+        "max": 210.5193226320437
+      },
+      "HEATER2_output_T_SP": {
+        "min": 256.0657102338919,
+        "max": 270.64749450277185
+      },
+      "acidgas_Fm": {
+        "min": 136.20695469715858,
+        "max": 148.1470049761907
+      },
+      "acidgas_T": {
+        "min": 83.0623486481817,
+        "max": 84.03762029593967
+      },
+      "acidgas_P": {
+        "min": 1.6665320715450478,
+        "max": 1.6826992478324758
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  },
+  {
+    "case": "R5-17",
+    "seed": 1899562426099878646,
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 315.4914505241699,
+        "max": 326.5927330988438
+      },
+      "HEATER2_output_T_SP": {
+        "min": 183.87969195430566,
+        "max": 190.83979147687643
+      },
+      "acidgas_Fm": {
+        "min": 137.55690611405902,
+        "max": 148.40784491953727
+      },
+      "acidgas_T": {
+        "min": 82.98705909332836,
+        "max": 84.24769617539131
+      },
+      "acidgas_P": {
+        "min": 1.6682692923448206,
+        "max": 1.68325547935026
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  },
+  {
+    "case": "R5-18",
+    "seed": 3009176682480650792,
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 193.9263245159486,
+        "max": 200.30292431313467
+      },
+      "HEATER2_output_T_SP": {
+        "min": 253.41138407539248,
+        "max": 260.65059627934033
+      },
+      "acidgas_Fm": {
+        "min": 137.22782972075944,
+        "max": 148.24802781511525
+      },
+      "acidgas_T": {
+        "min": 83.05316600193501,
+        "max": 84.17447047101821
+      },
+      "acidgas_P": {
+        "min": 1.6678727624306593,
+        "max": 1.6828679446945847
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  }
+]

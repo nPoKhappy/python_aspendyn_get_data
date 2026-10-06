@@ -1,0 +1,98 @@
+[
+  {
+    "case": "R5-13",
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 314.54108197587226,
+        "max": 322.6438358194601
+      },
+      "HEATER2_output_T_SP": {
+        "min": 186.6755699990977,
+        "max": 190.18292555772803
+      },
+      "acidgas_Fm": {
+        "min": 135.80204471839585,
+        "max": 148.15824519084765
+      },
+      "acidgas_T": {
+        "min": 82.92032883266414,
+        "max": 84.25840117669738
+      },
+      "acidgas_P": {
+        "min": 1.6659717205651101,
+        "max": 1.6828726224716988
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  },
+  {
+    "case": "R5-14",
+    "formal_rows": 1440,
+    "actual_ann_input_min_max": {
+      "air2_SP": {
+        "min": 194.0754172550366,
+        "max": 201.78830325135254
+      },
+      "HEATER2_output_T_SP": {
+        "min": 255.20265057545325,
+        "max": 266.23371500631725
+      },
+      "acidgas_Fm": {
+        "min": 136.43758409468188,
+        "max": 148.0724049861001
+      },
+      "acidgas_T": {
+        "min": 83.11688608961023,
+        "max": 84.29395187317004
+      },
+      "acidgas_P": {
+        "min": 1.6668262952969601,
+        "max": 1.6828029831159772
+      }
+    },
+    "transformer_in_range": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "air2_only_soft_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "t2_only_soft_ood": {
+      "rows": 1440,
+      "ratio": 1.0
+    },
+    "both_ood": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "outside_gain_ann_envelope": {
+      "rows": 0,
+      "ratio": 0.0
+    },
+    "warmup_rows": 480,
+    "aspen_failures_or_nonconvergence": 0
+  }
+]

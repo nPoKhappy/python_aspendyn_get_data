@@ -1,0 +1,90 @@
+{
+  "case": "R5-25",
+  "seed": 7968650919193848432,
+  "formal_rows": 1440,
+  "actual_ann_input_min_max": {
+    "air2_SP": {
+      "min": 118.06226645512803,
+      "max": 130.11869247702833
+    },
+    "HEATER2_output_T_SP": {
+      "min": 109.688756536777,
+      "max": 130.02251814545872
+    },
+    "acidgas_Fm": {
+      "min": 136.56138609921473,
+      "max": 147.7286531608552
+    },
+    "acidgas_T": {
+      "min": 83.10374127798028,
+      "max": 84.16129932017702
+    },
+    "acidgas_P": {
+      "min": 1.6669050685696862,
+      "max": 1.6820382377011491
+    }
+  },
+  "transformer_in_range": {
+    "rows": 0,
+    "ratio": 0.0
+  },
+  "air2_only_soft_ood": {
+    "rows": 0,
+    "ratio": 0.0
+  },
+  "t2_only_soft_ood": {
+    "rows": 0,
+    "ratio": 0.0
+  },
+  "both_ood": {
+    "rows": 1440,
+    "ratio": 1.0
+  },
+  "outside_gain_ann_envelope": {
+    "rows": 0,
+    "ratio": 0.0
+  },
+  "warmup_rows": 960,
+  "aspen_failures_or_nonconvergence": 0,
+  "direction": "lower_left",
+  "planned_region": {
+    "air2": [
+      115.0,
+      135.0
+    ],
+    "t2": [
+      105.0,
+      135.0
+    ]
+  },
+  "warmup_targets": [
+    [
+      125.0,
+      190.0
+    ],
+    [
+      125.0,
+      120.0
+    ]
+  ],
+  "formal_targets": [
+    [
+      130.11869247702833,
+      109.688756536777
+    ],
+    [
+      118.06226645512803,
+      130.02251814545872
+    ],
+    [
+      124.6688472049528,
+      120.8816156815997
+    ]
+  ],
+  "directional_region_rows": 1440,
+  "measured_air2_region_rows": 1440,
+  "actual_second_air2_min_max": {
+    "min": 118.03457819021179,
+    "max": 130.16379099648648
+  }
+}
