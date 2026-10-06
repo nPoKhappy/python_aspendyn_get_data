@@ -115,21 +115,37 @@ class Env(object):
         self.ad_process = subprocess.Popen(
             [ad_path, "/AD", aspen_file_path], cwd=ad_working_dir
         )
-
+        requested_path = os.path.normcase(os.path.normpath(aspen_file_path))
         self.adyn = None
+        last_seen_path = None
         last_error = None
-        deadline = time.time() + 45
+        deadline = time.time() + 120
         while time.time() < deadline:
             try:
-                self.adyn = AspenComObject(comtypes.client.GetActiveObject(prog_id, dynamic=True))
-                print(f"成功連接到 COM: {prog_id}")
-                break
-            except (OSError, comtypes.COMError) as e:
-                last_error = e
-                time.sleep(1)
+                candidate = comtypes.client.GetActiveObject(prog_id, dynamic=True)
+                last_seen_path = os.path.normcase(
+                    os.path.normpath(candidate.ActiveDocument.FullName)
+                )
+                if last_seen_path == requested_path:
+                    self.adyn = AspenComObject(candidate)
+                    print(
+                        "成功連接到 COM document: "
+                        f"{candidate.ActiveDocument.FullName}"
+                    )
+                    break
+            except (AttributeError, OSError, comtypes.COMError) as exc:
+                last_error = exc
+            time.sleep(1)
 
         if self.adyn is None:
-            raise TimeoutError(f"無法連接到 Aspen Dynamics COM: {prog_id}; last_error={last_error}")
+            self.ad_process.terminate()
+            self.ad_process.wait(timeout=30)
+            self.ad_process = None
+            raise TimeoutError(
+                "無法連接到指定的 Aspen Dynamics 文件: "
+                f"requested={requested_path!r}, last_seen={last_seen_path!r}, "
+                f"last_error={last_error!r}"
+            )
 
         self.adyn.Visible = True  # Aspen視窗的可視化
         self.sim = self.adyn.Simulation
